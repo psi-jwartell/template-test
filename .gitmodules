@@ -1,0 +1,6 @@
+[submodule "atmega64m1-support-package"]
+	path = atmega64m1-support-package
+	url = ./atmega64m1-support-package/
+[submodule "embedded-dsa"]
+	path = embedded-dsa
+	url = ./embedded-dsa/
