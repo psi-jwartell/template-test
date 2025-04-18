@@ -4,3 +4,6 @@
 [submodule "embedded-dsa"]
 	path = embedded-dsa
 	url = ./embedded-dsa/
+[submodule "psndl-atmega-common-code"]
+	path = psndl-atmega-common-code
+	url = ./psndl-atmega-common-code/
