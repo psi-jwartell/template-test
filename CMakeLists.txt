@@ -34,10 +34,12 @@ file(GLOB SUPPORT_PACKAGE_C_FILES "./atmega64m1-support-package/lib/src/*.c")
 file(GLOB ATMEGA_COMMON_ASM_FILES "./psndl-atmega-common-code/include/*.S")
 file(GLOB ATMEGA_COMMON_C_FILES "./psndl-atmega-common-code/src/*.c")
 
+file(GLOB EO_MODULE_C_FILES "./eo_module/src/*.c")
+
 # This is the only source file used from the embedded-dsa library
 file(GLOB EMBEDDED_DSA_C_FILES "./embedded-dsa/circular_buffer.c")
 
-add_executable(${PROJECT_NAME} ${SUPPORT_PACKAGE_C_FILES} ${EMBEDDED_DSA_C_FILES} ${ATMEGA_COMMON_C_FILES} ${ATMEGA_COMMON_ASM_FILES})
+add_executable(${PROJECT_NAME} ${SUPPORT_PACKAGE_C_FILES} ${EMBEDDED_DSA_C_FILES} ${EO_MODULE_C_FILES} ${ATMEGA_COMMON_C_FILES} ${ATMEGA_COMMON_ASM_FILES})
 
 # All the Microchip Studio stuff that was deemed necessary to build
 target_include_directories(${PROJECT_NAME} PRIVATE "./psndl-atmega-common-code/config")
@@ -45,6 +47,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE "./psndl-atmega-common-code/i
 target_include_directories(${PROJECT_NAME} PRIVATE "./psndl-atmega-common-code/utils")
 target_include_directories(${PROJECT_NAME} PRIVATE "./psndl-atmega-common-code/src")
 target_include_directories(${PROJECT_NAME} PRIVATE "./psndl-atmega-common-code/utils/assembler")
+
+# The include files for the EO module 
+target_include_directories(${PROJECT_NAME} PRIVATE "./eo_module/include")
 
 # TODO: Make and then link this instead of doing it like this
 target_include_directories(${PROJECT_NAME} PRIVATE "./atmega64m1-support-package/lib/inc")
