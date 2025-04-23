@@ -1,0 +1,19 @@
+name: Format Check CI
+
+on:
+  push:
+    branches: [ "*" ]
+
+jobs:
+  check_format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-format-15
+        run: sudo apt-get install -y clang-format-15
+
+      # check format on all *.c & *.h files in bsp/ and app/ directories excluding bsp/chip/mcu/cmsis_iccarm.h which contains syntax that tricks clang-format into thinking it's Objective-C
+      - name: Check format
+        run: find adapters app drivers hal ! -wholename hal/cmsis/cmsis_iccarm.h -iname *.h -o -iname *.cpp -o -iname *.c -o -iname *.hpp | xargs clang-format-15 --dry-run -Werror
