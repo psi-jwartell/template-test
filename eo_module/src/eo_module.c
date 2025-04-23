@@ -1,10 +1,10 @@
 #include "eo_module.h"
 #include "atmega_common.h"
 
-/* Simulate housekeeping data collection */
-void eo_get_housekeeping(uint8_t dlc, uint8_t *data){
-	for(int i = 0; i < dlc; ++i){
-		data[i] = i;
+/* Simulate housekeeping data collection. Replace this function's internals with actual HK collection */
+void eo_get_housekeeping(imc_can_frame_t *can_frame){
+	for(int i = 0; i < can_frame->dlc; ++i){
+		can_frame->data[i] = i;
 	}
 }
 
@@ -17,6 +17,11 @@ void eo_init(){
 	// Initialize the EO component here. The function name is shared but its declaration should be different per-submodule.
 	// You should initialize submodule-specific item table settings and configure items necessary for the submodule to function 
 	// (for instance, the SN65 loopback enable on the synthesizer). 
+
+	/** Item table information */
+	// Common items 0x0000-0x001F (0-31)
+	// Profile items 0x0020-0x003F (32-63)
+	// Submodule-specific items 0x0040-0x007F (64-127)
 
 	/** COMMON SECTION */
 	// Change these to the appropriate values. They are placeholders for now
@@ -37,9 +42,9 @@ void eo_init(){
 void eo_change_setting(uint8_t index){
 	// Handle EO component settings here. For example, writing synth registers.
 	switch(index){
-		case 1:
+		case IMC_SUBMODULE_CAN_ID:
 		break;
-		case 2:
+		case IMC_SUBMODULE_CAN_HK_RATE:
 		break;
 		default:
 		break;
