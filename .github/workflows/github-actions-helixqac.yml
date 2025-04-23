@@ -1,0 +1,50 @@
+name: Static Analysis Toolchain
+run-name: ${{ github.actor }} is running the self-hosted Static Analysis Toolchain.
+on: [push]
+env:
+  HELIXQAC_SERVER_URL: 192.168.200.15:8080
+  HELIXQAC_RULES_FILE: "./m3cm-5.6.0-en_US.rcf"
+jobs:
+ Helix_QAC-Check:
+  runs-on: [self-hosted, linux, x64, HelixQAC] # The runner must be x64 Linux, self-hosted, and labeled HelixQAC
+  steps:
+   - name: Check out repository code
+     uses: actions/checkout@v4
+   - name: Set folder as Helix QAC project
+     run: |
+        echo "Setting folder as Helix QAC project"
+        
+        qacli project create -P . -R $HELIXQAC_RULES_FILE 
+
+        qacli sync --type INJECT --generate-cct "make" # Synchronization generates the CCT
+   - name: Authenticate with Validate Server
+     run: |
+        echo "Authenticating with Validate Server"
+        qacli auth --validate  -U $HELIXQAC_SERVER_URL --token-file ~/helixqac/github-actions-token
+   - name: Helix QAC Analysis 
+     run: |
+        echo "Running QAC analysis on input files. View summary in Validate Server"
+        # The analysis is run on the build machine - the results and configuration are uploaded to Validate later
+        
+        qacli analyze -cf -P .
+        qacli view -P . -m STDOUT --type SUMMARY # Display summary in the GitHub Actions context
+   - name: Create remote project on Validate Server 
+     run: | 
+        echo "Create Perforce Validate project"
+        echo "Validate Project Name:" ${{ github.event.repository.name }}
+                
+        if ! echo $(qacli validate projects -L -U 192.168.200.15:8080) | grep -q psndl-l-software; then
+          # Creates a Validate project with the same name as the repo if the server does not list a project with that name already 
+          echo "Created new Validate project"
+          qacli validate project -U $HELIXQAC_SERVER_URL -C ${{ github.event.repository.name }};
+        else 
+          echo "Validate project already exists";
+        fi
+   - name: Link local project to remote
+     run: | 
+        qacli validate connect -U $HELIXQAC_SERVER_URL -S ${{ github.event.repository.name }} -P . # Connect the local to remote project
+   - name: Push config and project data to Validate server
+     run: |
+        qacli validate config -P . -u # Upload project config data
+        qacli upload --validate -P . # Upload project diagnostics
+
