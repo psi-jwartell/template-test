@@ -39,7 +39,9 @@ file(GLOB EO_MODULE_C_FILES "./eo_module/src/*.c")
 # This is the only source file used from the embedded-dsa library
 file(GLOB EMBEDDED_DSA_C_FILES "./embedded-dsa/circular_buffer.c")
 
-add_executable(${PROJECT_NAME} ${SUPPORT_PACKAGE_C_FILES} ${EMBEDDED_DSA_C_FILES} ${EO_MODULE_C_FILES} ${ATMEGA_COMMON_C_FILES} ${ATMEGA_COMMON_ASM_FILES})
+file(GLOB IMC_C_FILES "./imc/*.c")
+
+add_executable(${PROJECT_NAME} ${SUPPORT_PACKAGE_C_FILES} ${EMBEDDED_DSA_C_FILES} ${IMC_C_FILES} ${EO_MODULE_C_FILES} ${ATMEGA_COMMON_C_FILES} ${ATMEGA_COMMON_ASM_FILES})
 
 # All the Microchip Studio stuff that was deemed necessary to build
 target_include_directories(${PROJECT_NAME} PRIVATE "./psndl-atmega-common-code/config")
@@ -57,6 +59,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE "./atmega64m1-support-package
 
 # Include the embedded-dsa library
 target_include_directories(${PROJECT_NAME} PRIVATE "./embedded-dsa")
+
+# Include the IMC library
+target_include_directories(${PROJECT_NAME} PRIVATE "./imc")
 
 # Include and link the AVR libraries 
 target_include_directories(${PROJECT_NAME} PRIVATE "/usr/lib/avr/include")
